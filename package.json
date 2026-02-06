@@ -1,0 +1,14 @@
+{
+  "name": "double-booking-take-home",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "predev": "pnpm --filter @double-booking-take-home/common build"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0"
+  }
+}
