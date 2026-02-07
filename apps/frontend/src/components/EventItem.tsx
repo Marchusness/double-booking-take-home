@@ -35,7 +35,7 @@ export function EventItem({
       </div>
       <div className="mt-4 sm:mt-0 flex items-center justify-end">
         <Link 
-          href={`/event/${event.id}`}
+          href={`/events/${event.id}`}
           className="w-full sm:w-auto rounded-full bg-primary hover:bg-primary-hover text-white px-6 py-2.5 text-sm font-semibold transition-all shadow-sm active:scale-95 text-center"
         >
           Get Tickets
