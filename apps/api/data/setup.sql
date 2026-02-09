@@ -6,24 +6,31 @@ CREATE TABLE IF NOT EXISTS events (
     venue TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS bookings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    checkoutSessionId TEXT NOT NULL,
+    userId TEXT NOT NULL,
+    createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    -- seats for this booking will be stored in the seats table
+);
+
 CREATE TABLE IF NOT EXISTS seats (
     id TEXT PRIMARY KEY,
     eventId TEXT NOT NULL,
     row TEXT NOT NULL,
     number INTEGER NOT NULL,
-    status TEXT NOT NULL CHECK(status IN ('available', 'held', 'booked')),
-    heldUntil TEXT,
-    userId TEXT,
     price REAL NOT NULL,
-    FOREIGN KEY(eventId) REFERENCES events(id)
-);
 
-CREATE TABLE IF NOT EXISTS bookings (
-    id TEXT PRIMARY KEY,
-    eventId TEXT NOT NULL,
-    seatId TEXT NOT NULL,
-    userId TEXT NOT NULL,
-    createdAt TEXT NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('available', 'held', 'booked')),
+    -- available no variables required
+
+    -- held
+    heldUntil TEXT,
+    checkoutSessionId TEXT,
+
+    -- booked
+    bookingId TEXT,
+    
     FOREIGN KEY(eventId) REFERENCES events(id),
-    FOREIGN KEY(seatId) REFERENCES seats(id)
+    FOREIGN KEY(bookingId) REFERENCES bookings(id)
 );
