@@ -98,13 +98,13 @@ export function EventHero({
           <p className="text-3xl font-bold text-text-primary">$45 - $120</p>
         </div>
         
-        <button 
-          onClick={() => document.getElementById('seating-section')?.scrollIntoView({ behavior: 'smooth' })}
+        <Link 
+          href={`/checkout?eventId=${event.id}`}
           className="group w-full max-w-xs bg-primary hover:bg-primary-hover text-white text-lg font-bold py-4 px-8 rounded-xl shadow-lg shadow-orange-200 hover:shadow-orange-300 transform transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
         >
           Select Seats
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </button>
+        </Link>
         
         <p className="mt-6 text-xs text-text-secondary">
           Prices may vary by seat location. <br />All sales final.
@@ -199,16 +199,8 @@ export default function EventDetailPage({
     event, 
     seats, 
     loading, 
-    message, 
-    handleHold 
+    error, 
   } = useEventDetails(eventId);
-
-  const onHold = async (seatId: string) => {
-    const result = await handleHold(seatId);
-    if (result.success) {
-      router.push(`/checkout?eventId=${eventId}&seatId=${seatId}`);
-    }
-  };
 
   if (loading) {
     return (
@@ -253,19 +245,15 @@ export default function EventDetailPage({
           </Link>
         </div>
 
-        {message && (
+        {error && (
           <div className={`w-full max-w-4xl mb-8 p-4 rounded-xl border ${
-            message.type === 'error' ? 'bg-red-50 border-red-200 text-red-700' : 
-            message.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 
-            'bg-blue-50 border-blue-200 text-blue-700'
+            'bg-red-50 border-red-200 text-red-700'
           }`}>
-            {message.text}
+            {error}
           </div>
         )}
 
         <EventHero event={event} availableTicketsCount={availableTicketsCount} />
-        
-        <SeatingChart seats={seats} onHold={onHold} />
       </main>
 
       <Footer />

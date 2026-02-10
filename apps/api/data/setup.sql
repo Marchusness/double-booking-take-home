@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS seats (
     -- available no variables required
 
     -- held
-    heldUntil TEXT,
+    heldUntil INTEGER,
     checkoutSessionId TEXT,
 
     -- booked
-    bookingId TEXT,
+    bookingId INTEGER,
     
     FOREIGN KEY(eventId) REFERENCES events(id),
     FOREIGN KEY(bookingId) REFERENCES bookings(id)

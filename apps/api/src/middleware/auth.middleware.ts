@@ -9,6 +9,8 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     userId = randomUUID();
     res.cookie('user_id', userId, { 
       httpOnly: true, 
+      sameSite: 'lax',
+      path: '/',
     });
   }
 

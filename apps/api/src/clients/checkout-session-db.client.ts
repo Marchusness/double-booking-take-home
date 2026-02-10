@@ -33,13 +33,8 @@ export const CheckoutDbClient = {
 
   async getCheckoutSession(checkoutId?: string): Promise<CheckoutSession | null> {
     if (!checkoutId) return null;
-
     const session = sessions.get(checkoutId);
     if (!session) return null;
     return session;
   },
-
-  async deleteCheckoutSession(checkoutId: string): Promise<void> {
-    sessions.delete(checkoutId);
-  }
 };

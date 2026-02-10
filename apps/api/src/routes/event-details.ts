@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { EventService } from '../services/event.service';
 import { EventDetailsResponse, GetEventDetailsParamsSchema } from '@double-booking-take-home/common';
+import { toFrontendSeat } from '../utils/frontEndSeat';
 
 export const eventDetailsRouter = Router();
 
@@ -17,7 +18,9 @@ eventDetailsRouter.get('/:eventId', async (req: Request, res: Response) => {
 
   const response: EventDetailsResponse = {
     success: true,
-    data: details,
+    data: {
+      event: details.event,
+    },
   };
   res.json(response);
 });

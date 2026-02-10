@@ -44,7 +44,7 @@ SELECT * FROM inserted_booking;
 
 export const BookingDbClient = {
   async createBooking(checkoutSessionId: string, seatIds: string[], userId: string): Promise<Booking | null> {
-    const now = new Date().toISOString();
+    const now = Date.now();
     
     const transaction = db.transaction(() => {
       // 1. Check if all seats are either available or held by this checkoutSessionId
@@ -67,6 +67,7 @@ export const BookingDbClient = {
                           (!seat.heldUntil || seat.heldUntil >= now);
         
         if (!isAvailable && !isHeldByMe) {
+          console.error(`[BookingDbClient] Seat is already booked or held by someone else. Seat: ${JSON.stringify(seat)}, Checkout session ID: ${checkoutSessionId}, User ID: ${userId}`);
             // TODO: Pass error message up to the api so it can be returned to the user.
           return null; // Seat is already booked or held by someone else
         }
@@ -88,13 +89,12 @@ export const BookingDbClient = {
         SET status = 'booked', 
             bookingId = ?, 
             heldUntil = NULL, 
-            checkoutSessionId = NULL,
-            userId = ?
+            checkoutSessionId = NULL
         WHERE id = ?
       `);
 
       for (const seatId of seatIds) {
-        updateSeat.run(bookingId, userId, seatId);
+        updateSeat.run(bookingId, seatId);
       }
 
       return db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId) as Booking;

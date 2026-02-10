@@ -12,9 +12,11 @@ export function useEvents() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:3001/api/events');
+      const res = await fetch('http://localhost:3001/api/events', {
+        credentials: 'include',
+      });
       const data: ListEventsResponse = await res.json();
-      if (data.success && data.data) {
+      if (data.success) {
         setEvents(data.data);
       } else {
         setError(data.error || 'Failed to fetch events');

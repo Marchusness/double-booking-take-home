@@ -20,11 +20,6 @@ export const CheckoutService = {
     // 2. Call BookingDbClient to create the booking and update seats atomically
     const booking = await BookingDbClient.createBooking(checkoutId, seatIds, userId);
 
-    if (booking) {
-      // 3. Cleanup the checkout session after a successful booking
-      await CheckoutDbClient.deleteCheckoutSession(checkoutId);
-    }
-
     return booking;
   },
 };

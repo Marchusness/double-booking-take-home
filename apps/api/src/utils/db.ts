@@ -1,43 +1,16 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 
-const dbPath = path.join(process.cwd(), 'database.sqlite');
+const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
 const db = new Database(dbPath);
 
 db.exec('PRAGMA foreign_keys = ON;');
 
-// Initialize database schema
-db.exec(`
-  CREATE TABLE IF NOT EXISTS events (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT,
-    date TEXT NOT NULL,
-    venue TEXT NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS seats (
-    id TEXT PRIMARY KEY,
-    eventId TEXT NOT NULL,
-    row TEXT NOT NULL,
-    number INTEGER NOT NULL,
-    status TEXT NOT NULL CHECK(status IN ('available', 'held', 'booked')),
-    heldUntil TEXT,
-    userId TEXT,
-    price REAL NOT NULL,
-    FOREIGN KEY(eventId) REFERENCES events(id)
-  );
-
-  CREATE TABLE IF NOT EXISTS bookings (
-    id TEXT PRIMARY KEY,
-    eventId TEXT NOT NULL,
-    seatId TEXT NOT NULL,
-    userId TEXT NOT NULL,
-    createdAt TEXT NOT NULL,
-    FOREIGN KEY(eventId) REFERENCES events(id),
-    FOREIGN KEY(seatId) REFERENCES seats(id)
-  );
-`);
+// Initialize database schema from setup.sql
+const setupSqlPath = path.join(process.cwd(), 'data', 'setup.sql');
+const setupSql = fs.readFileSync(setupSqlPath, 'utf8');
+db.exec(setupSql);
 
 // Seed data if empty
 const eventCount = db.prepare('SELECT COUNT(*) as count FROM events').get() as { count: number };

@@ -1,16 +1,16 @@
 import { EventDbClient } from '../clients/event-db.client';
-import { Event, Seat } from '@double-booking-take-home/common';
+import { Event, FrontendSeat, Seat } from '@double-booking-take-home/common';
+import { toFrontendSeat } from '../utils/frontEndSeat';
 
 export const EventService = {
   async listEvents(): Promise<Event[]> {
     return EventDbClient.getAllEvents();
   },
 
-  async getEventDetails(eventId: string): Promise<{ event: Event; seatingPlan: Seat[] } | null> {
+  async getEventDetails(eventId: string): Promise<{ event: Event } | null> {
     const event = await EventDbClient.getEventById(eventId);
     if (!event) return null;
     
-    const seatingPlan = await EventDbClient.getSeatingPlan(eventId);
-    return { event, seatingPlan };
+    return { event };
   }
 };

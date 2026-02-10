@@ -10,11 +10,20 @@ export const SeatSchema = z.object({
   row: z.string(),
   number: z.number(),
   status: SeatStatusSchema,
-  heldUntil: z.string().optional(),
-  userId: z.string().optional(),
+  heldUntil: z.number().optional(),
+  checkoutSessionId: z.string().optional(),
+  bookingId: z.number().optional(),
   price: z.number(),
 });
 export type Seat = z.infer<typeof SeatSchema>;
+
+export const BookingSchema = z.object({
+  id: z.number(),
+  checkoutSessionId: z.string(),
+  userId: z.string(),
+  createdAt: z.number(),
+});
+export type Booking = z.infer<typeof BookingSchema>;
 
 export const EventSchema = z.object({
   id: z.string(),
@@ -25,6 +34,22 @@ export const EventSchema = z.object({
 });
 export type Event = z.infer<typeof EventSchema>;
 
+// --- Frontend Types ---
+
+export const FrontendSeatStatusSchema = z.enum(['available', 'heldByCurrentCheckoutSession', 'notAvailable']);
+export type FrontendSeatStatus = z.infer<typeof FrontendSeatStatusSchema>;
+
+export const FrontendSeatSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  row: z.string(),
+  number: z.number(),
+  status: FrontendSeatStatusSchema,
+  price: z.number(),
+  lastUpdatedAt: z.number(),
+});
+export type FrontendSeat = z.infer<typeof FrontendSeatSchema>;
+
 // --- Request Schemas ---
 
 export const GetEventDetailsParamsSchema = z.object({
@@ -33,40 +58,51 @@ export const GetEventDetailsParamsSchema = z.object({
 
 export const TryEnterCheckoutSchema = z.object({
   eventId: z.string(),
-  seatId: z.string(),
+  checkoutId: z.string().optional(),
 });
 
 export const AttemptClaimSeatSchema = z.object({
   eventId: z.string(),
   seatId: z.string(),
+  checkoutId: z.string(),
 });
 
 export const CheckoutSchema = z.object({
   eventId: z.string(),
-  seatId: z.string(),
+  seatIds: z.array(z.string()),
+  checkoutId: z.string(),
 });
 
 // --- Response Types ---
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
+export type ApiResponse<T> = {
+  success: true;
+  data: T;
+} | {
+  success: false;
+  error: string;
 }
 
 export type ListEventsResponse = ApiResponse<Event[]>;
 export type EventDetailsResponse = ApiResponse<{
   event: Event;
-  seatingPlan: Seat[];
+}>;
+
+export type GetSeatingPlanResponse = ApiResponse<{
+  seatingPlan: FrontendSeat[];
+}>;
+
+export type UnclaimSeatResponse = ApiResponse<{
+  seat: FrontendSeat;
 }>;
 export type TryEnterCheckoutResponse = ApiResponse<{
   canProceed: boolean;
-  message?: string;
+  checkoutId: string;
+  checkoutExpiresAt?: number;
 }>;
 export type AttemptClaimSeatResponse = ApiResponse<{
-  seat: Seat;
+  seat: FrontendSeat;
 }>;
 export type CheckoutResponse = ApiResponse<{
   bookingId: string;
-  seat: Seat;
 }>;

@@ -9,7 +9,10 @@ import { listEventsRouter } from './routes/list-events';
 import { eventDetailsRouter } from './routes/event-details';
 import { tryEnterCheckoutRouter } from './routes/try-enter-checkout';
 import { attemptClaimSeatRouter } from './routes/attempt-claim-seat';
+import { unclaimSeatRouter } from './routes/unclaim-seat';
+import { seatingPlanRouter } from './routes/seating-plan';
 import { checkoutRouter } from './routes/checkout';
+import { CheckoutQueueConsumer } from './worker/checkoutQueueConsumer';
 
 dotenv.config();
 
@@ -30,8 +33,12 @@ app.use(authMiddleware);
 app.use('/api/events', listEventsRouter);
 app.use('/api/event-details', eventDetailsRouter);
 app.use('/api/try-enter-checkout', tryEnterCheckoutRouter);
+app.use('/api/seating-plan', seatingPlanRouter);
 app.use('/api/attempt-claim-seat', attemptClaimSeatRouter);
+app.use('/api/unclaim-seat', unclaimSeatRouter);
 app.use('/api/checkout', checkoutRouter);
+
+CheckoutQueueConsumer.consumeCheckoutQueue();
 
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);

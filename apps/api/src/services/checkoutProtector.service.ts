@@ -11,7 +11,7 @@ export const CheckoutProtectorService = {
     if (!checkoutId) {
       checkoutId = randomUUID();
 
-      if (await CheckoutQueueClient.checkoutQueueLength() < CHECKOUT_QUEUE_RATE_LIMIT) {
+      if ((await CheckoutQueueClient.checkoutQueueLength()) < CHECKOUT_QUEUE_RATE_LIMIT) {
         const session = await CheckoutDbClient.createCheckoutSession(userId, checkoutId);
         await CheckoutQueueClient.enqueueCheckout({ userId, checkoutId, inCheckout: true });
         return { canProceed: true, checkoutId: checkoutId, checkoutSession: session };
